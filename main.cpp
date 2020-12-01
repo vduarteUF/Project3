@@ -46,7 +46,7 @@ int main() {
             file.open("SenatorTradingV2.csv");
             string line;
             string date, owner, ticker, type, senator;
-            int count;
+            int count = 0;
             while (!file.eof()) {
                 getline(file, line);
                 stringstream str_stream(line);
@@ -65,10 +65,10 @@ int main() {
                 }
             }
             if (count == 0) {
-
+                cout << "Name not found." << endl;
             }
             else {
-                
+                cout << "Number of Records " << count << "." << endl;
             }
         }
         // saved for future commands
