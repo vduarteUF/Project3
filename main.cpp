@@ -8,7 +8,7 @@ int main() {
     // loop until exit menu
     while (quit) {
         
-        int option;
+        string option = "0";
         // menu
         cout << "U.S. Senator Stock Market Data" << endl;
         cout << "1. Search for a Senator's records" << endl;
@@ -16,21 +16,28 @@ int main() {
         
         // option selection
         cout << "Enter one of the options above: ";
-        cin >> option;
+        getline(cin, option);
 
         // function calls
-        if (option == 1) {
+        if (option == "1") {
             
-            // Search the csv for Senator records
+            // input name
+            string name;
+            cout << "Enter a Senator's name: ";
+            getline (cin, name);
+            cout << "Searching for " << name << "..." << endl;
+
+            // read in the csv
+
 
         }
-        else if (option == 2) {
+        else if (option == "2") {
             
             // Exit the loop
             quit = false;
         }
         else {
-            cout << "Not a valid option, try again."
+            cout << "Not a valid option, try again." << endl;
         }
     }
     return 0;
