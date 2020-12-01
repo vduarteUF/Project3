@@ -27,7 +27,7 @@ int main() {
         //cout << "3. " << endl;
         //cout << "4. " << endl;
         cout << "5. Exit" << endl;
-        
+
         // option selection
         cout << "Enter one of the options above: ";
         getline(cin, option);
