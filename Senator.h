@@ -17,7 +17,7 @@ class Senator
             string type; //Sale(Full), Sale(Partial), Purchase
 
             Trade();
-            Trade(string _ticker, string _date, string _owner, string _type);
+            Trade(string _ticker, string _owner, string _type, string _date);
         };
     private:
         string name;
@@ -36,7 +36,7 @@ Senator::Trade::Trade()
     type = "N/A";
 }
 
-Senator::Trade::Trade(string _ticker, string _date, string _owner, string _type)
+Senator::Trade::Trade(string _ticker, string _owner, string _type, string _date)
 {
     this->ticker = _ticker;
     this->date = _date;
@@ -58,6 +58,25 @@ Senator::Senator(string _name)
 
 void Senator::UpdateTrades()
 {
-    
+    ifstream file;
+    file.open("SenatorTradingV2.csv");
+    string line;
+    string date, owner, ticker, type, senator;
+    int count;
+    while (!file.eof()) 
+    {
+        getline(file, line);
+        stringstream str_stream(line);
+        getline (str_stream, senator, ',');
+        getline (str_stream, ticker, ',');
+        getline (str_stream, owner, ',');
+        getline (str_stream, type, ',');
+        getline (str_stream, date, ',');
+
+        if (name == senator)
+        {
+            trades.push_back(Trade(ticker, owner, type, date));
+        }
+    }
 }
 
