@@ -1,9 +1,14 @@
 #include <iostream>
 #include<fstream>
 #include <string>
+#include <unordered_map>
+#include "Senator.h"
 using namespace std;
 
 int main() {
+
+    unordered_map<string, Senator> senators;
+
     bool quit = true;
 
     // loop until exit menu
