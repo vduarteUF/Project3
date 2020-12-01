@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include <unordered_map>
 using namespace std;
@@ -51,6 +53,11 @@ Senator::Senator()
 Senator::Senator(string _name)
 {
     this->name = _name;
-    //TODO: Read CSV and fill in trades vector
+    UpdateTrades();
+}
+
+void Senator::UpdateTrades()
+{
+    
 }
 
