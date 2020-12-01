@@ -1,4 +1,5 @@
 #include <iostream>
+#include<fstream>
 #include <string>
 using namespace std;
 
@@ -32,8 +33,24 @@ int main() {
             cout << "Searching for " << name << "..." << endl;
 
             // read in the csv
+            ifstream file;
+            file.open("SenatorTradesFilter.csv");
+            string date, owner, ticker, type, amount, senator;
+            while (!file.eof()) {
+                getline (file, date, ',');
+                getline (file, owner, ',');
+                getline (file, ticker, ',');
+                getline (file, type, ',');
+                getline (file, amount, ',');
+                getline (file, senator, ',');
 
-
+                if (name == senator) {
+                    cout << "Name: " << senator;
+                    cout << "Ticker: " << ticker;
+                    cout << "Date: " << date;
+                    cout << endl;
+                }
+            }
         }
         // saved for future commands
         /*else if () {
