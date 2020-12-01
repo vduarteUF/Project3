@@ -1,10 +1,14 @@
 #include <iostream>
-#include<fstream>
+#include <fstream>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include "Senator.h"
 using namespace std;
 
+void Read() {
+
+}
 int main() {
 
     unordered_map<string, Senator> senators;
@@ -39,22 +43,32 @@ int main() {
 
             // read in the csv
             ifstream file;
-            file.open("SenatorTradesFilter.csv");
-            string date, owner, ticker, type, amount, senator;
+            file.open("SenatorTradingV2.csv");
+            string line;
+            string date, owner, ticker, type, senator;
+            int count;
             while (!file.eof()) {
-                getline (file, date, ',');
-                getline (file, owner, ',');
-                getline (file, ticker, ',');
-                getline (file, type, ',');
-                getline (file, amount, ',');
-                getline (file, senator, ',');
+                getline(file, line);
+                stringstream str_stream(line);
+                getline (str_stream, senator, ',');
+                getline (str_stream, ticker, ',');
+                getline (str_stream, owner, ',');
+                getline (str_stream, type, ',');
+                getline (str_stream, date, ',');
 
                 if (name == senator) {
-                    cout << "Name: " << senator;
-                    cout << "Ticker: " << ticker;
-                    cout << "Date: " << date;
+                    cout << senator << ",";
+                    cout << ticker << ",";
+                    cout << date;
                     cout << endl;
+                    count++;
                 }
+            }
+            if (count == 0) {
+
+            }
+            else {
+                
             }
         }
         // saved for future commands
