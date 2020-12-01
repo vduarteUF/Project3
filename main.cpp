@@ -12,7 +12,11 @@ int main() {
         // menu
         cout << "U.S. Senator Stock Market Data" << endl;
         cout << "1. Search for a Senator's records" << endl;
-        cout << "2. Exit" << endl;
+        // add more options below
+        //cout << "2. " << endl;
+        //cout << "3. " << endl;
+        //cout << "4. " << endl;
+        cout << "5. Exit" << endl;
         
         // option selection
         cout << "Enter one of the options above: ";
@@ -31,7 +35,17 @@ int main() {
 
 
         }
-        else if (option == "2") {
+        // saved for future commands
+        /*else if () {
+
+        }*/
+        /*else if () {
+
+        }*/
+        /*else if () {
+
+        }*/
+        else if (option == "5") {
             
             // Exit the loop
             quit = false;
