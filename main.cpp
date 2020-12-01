@@ -39,6 +39,7 @@ int main() {
         else {
             cout << "Not a valid option, try again." << endl;
         }
+        cout << endl;
     }
     return 0;
 }
