@@ -89,5 +89,6 @@ void Senator::UpdateTrades()
             trades.push_back(newTrade);
         }
     }
+    file.close();
 }
 
