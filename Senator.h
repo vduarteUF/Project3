@@ -21,13 +21,17 @@ class Senator
         };
     private:
         string name;
-        vector<Trade> trades;
+        
         void UpdateTrades();
     public:
+        vector<Trade> trades;
+
         Senator();
         Senator(string _name);
+        ~Senator();
 };
 
+// Trade nested class definitions
 Senator::Trade::Trade()
 {
     ticker = "N/A";
@@ -44,6 +48,7 @@ Senator::Trade::Trade(string _ticker, string _owner, string _type, string _date)
     this->type = _type;
 }
 
+//Senator class definitions
 Senator::Senator()
 {
     name = "N/A";
@@ -56,12 +61,17 @@ Senator::Senator(string _name)
     UpdateTrades();
 }
 
+Senator::~Senator()
+{
+    //Need stuff here to prevent shallow deletion?
+}
+
 void Senator::UpdateTrades()
 {
     ifstream file;
     file.open("SenatorTradingV2.csv");
     string line;
-    string date, owner, ticker, type, senator;
+    string senator, ticker, owner, type, date;
     int count;
     while (!file.eof()) 
     {
@@ -75,7 +85,8 @@ void Senator::UpdateTrades()
 
         if (name == senator)
         {
-            trades.push_back(Trade(ticker, owner, type, date));
+            Trade newTrade(ticker, owner, type, date);
+            trades.push_back(newTrade);
         }
     }
 }

@@ -6,12 +6,35 @@
 #include "Senator.h"
 using namespace std;
 
-void Read() {
+void ReadSenator(string name, unordered_map<string, Senator*>& senators);
 
+void ReadSenator(string name, unordered_map<string, Senator*>& senators)
+{
+    ifstream file;
+    file.open("SenatorTradingV2.csv");
+    string senator;
+    string garbage; //better way to do this?
+    bool found;
+    while (!file.eof()) 
+    {
+        getline(file, senator, ',');
+        if (name == senator)
+        {
+            //Create senator object and break
+            Senator* newSenator = new Senator(name);
+            senators.emplace(name, newSenator);
+            found = true;
+            break;
+        }
+        getline(file, garbage);
+    }
+    if (!found)
+        cout << "Name not found." << endl;
 }
+
 int main() {
 
-    unordered_map<string, Senator> senators;
+    unordered_map<string, Senator*> senators;
 
     bool quit = true;
 
@@ -19,6 +42,7 @@ int main() {
     while (quit) {
         
         string option = "0";
+
         // menu
         cout << "U.S. Senator Stock Market Data" << endl;
         cout << "1. Search for a Senator's records" << endl;
@@ -39,36 +63,25 @@ int main() {
             string name;
             cout << "Enter a Senator's name: ";
             getline (cin, name);
+
+            //Search name
             cout << "Searching for " << name << "..." << endl;
+            ReadSenator(name, senators);
 
-            // read in the csv
-            ifstream file;
-            file.open("SenatorTradingV2.csv");
-            string line;
-            string date, owner, ticker, type, senator;
-            int count = 0;
-            while (!file.eof()) {
-                getline(file, line);
-                stringstream str_stream(line);
-                getline (str_stream, senator, ',');
-                getline (str_stream, ticker, ',');
-                getline (str_stream, owner, ',');
-                getline (str_stream, type, ',');
-                getline (str_stream, date, ',');
-
-                if (name == senator) {
-                    cout << senator << ",";
-                    cout << ticker << ",";
-                    cout << date;
-                    cout << endl;
-                    count++;
+            //Display trades
+            if (senators.count(name) != 0)
+            {
+                cout << "Showing all trades for: " << name << endl;
+                int numTrades = senators[name]->trades.size();
+                for (int i = 0; i < numTrades; i++)
+                {
+                    string _ticker = senators[name]->trades[i].ticker;
+                    string _owner = senators[name]->trades[i].owner;
+                    string _type = senators[name]->trades[i].type;
+                    string _date = senators[name]->trades[i].date;
+                    cout << _ticker << ", " << _owner << ", " << _type << ", " << _date << endl; 
                 }
-            }
-            if (count == 0) {
-                cout << "Name not found." << endl;
-            }
-            else {
-                cout << "Number of Records " << count << "." << endl;
+                cout << "Total trades: " << numTrades << endl;
             }
         }
         // saved for future commands
