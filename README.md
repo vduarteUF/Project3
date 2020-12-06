@@ -9,4 +9,6 @@
 - getline is used intstead of operator>> to handle each iteration of the while loop
 
 ## Plans
-- Complete creating Senator object (reading name, creating object, filling out trades vector)
+- Create function to calculate percentage correct of investments or something similar
+- Name similarity checker? Makes names easier to search
+- Remove non-public stocks from lists - they don't add anything and can't be used in calculations
