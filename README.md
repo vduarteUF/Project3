@@ -11,4 +11,3 @@
 ## Plans
 - Create function to calculate percentage correct of investments or something similar
 - Name similarity checker? Makes names easier to search
-- Remove non-public stocks from lists - they don't add anything and can't be used in calculations

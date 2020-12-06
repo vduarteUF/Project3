@@ -166,9 +166,9 @@ int main() {
 
         //Menu
         cout << "U.S. Senator Stock Market Data" << endl;
-        cout << "1. Search for a Senator's records" << endl;
+        cout << "1. Search for a Senator's public trading records" << endl;
         // add more options below
-        cout << "2. Search all Senator's records" << endl;
+        cout << "2. Search all Senator's public trading records" << endl;
         //cout << "3. " << endl;
         cout << "4. Display all availible senator names" << endl;
         cout << "5. Exit" << endl;

@@ -93,6 +93,9 @@ void Senator::UpdateTrades()
         getline (str_stream, type, ',');
         getline (str_stream, date, ',');
 
+        if (ticker == "--") //Removes non-public stocks from calculations and lists
+            continue;
+
         if (name == senator)
         {
             Trade newTrade(ticker, owner, type, date);
