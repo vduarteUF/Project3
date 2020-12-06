@@ -11,7 +11,9 @@ using namespace std;
 void SingleSenator(unordered_map<string, Senator*>& senators); //Option 1
 void AllSenators(unordered_map<string, Senator*>& senators); //Option 2
 void DisplayNames(); //Option 4
-void ReadSenator(string name, unordered_map<string, Senator*>& senators); //Helper
+void ReadSenator(string name, unordered_map<string, Senator*>& senators); //Helper for Single Senator
+void InvestmentCalculator(Senator* senator); //Helper for calculating trade success
+string ConvertDate(string date);
 
 //Functions Definitions
 void SingleSenator(unordered_map<string, Senator*>& senators)
@@ -22,7 +24,7 @@ void SingleSenator(unordered_map<string, Senator*>& senators)
     getline (cin, name);
 
     //Search name
-    cout << "Searching for " << name << "..." << endl;
+    cout << "Searching for " << name << "..." << endl << endl;
     ReadSenator(name, senators);
 
     //Display trades
@@ -38,8 +40,11 @@ void SingleSenator(unordered_map<string, Senator*>& senators)
                 string _date = senators[name]->trades[i].date;
                 cout << _ticker << ", " << _owner << ", " << _type << ", " << _date << endl; 
             }
-            cout << "Total trades: " << numTrades << endl;
+            cout << "Total trades: " << numTrades << endl << endl;
         }
+
+    //Calculate from stocks
+    InvestmentCalculator(senators[name]);
 }
 void AllSenators(unordered_map<string, Senator*>& senators)
 {
@@ -151,6 +156,58 @@ void ReadSenator(string name, unordered_map<string, Senator*>& senators)
     if (!found)
         cout << "Name not found." << endl;
     file.close();
+}
+void InvestmentCalculator(Senator* senator)
+{
+    cout << "Analyzing trades..." << endl;
+
+    ifstream file;
+    string garbage;
+    string line;
+    string stockDate, open, high, low, close, adjClose, volume;
+    string month, day, year, formattedStockDate;
+    for (int i = 0; i < senator->trades.size(); i++)
+    {
+        file.open("StockMarketDataset/stocks/" + senator->trades[i].ticker + ".csv");
+        if (!file.is_open())
+        {
+            cout << "Couldn't find data for ticker: " << senator->trades[i].ticker << endl;
+            cout << "File needed: " << "StockMarketDataset/stocks/" + senator->trades[i].ticker + ".csv" << endl;
+            continue;
+        }
+        
+        while (!file.eof())
+        {
+            stringstream str_stream(line);
+            getline(file, line);
+            getline(str_stream, stockDate, ',');
+            string senatorTradeDate = ConvertDate(senator->trades[i].date);
+
+            if (stockDate == senatorTradeDate)
+            {
+                cout << senator->trades[i].ticker << " trade on: " << stockDate << endl; //TODO: SEE IF TRADE WAS GOOD OR NOT
+            }
+            getline(str_stream, garbage);
+        }
+        file.close();
+    }
+
+    cout << endl;
+    cout << "NOTE: There may be less analyzed trades than recorded trades due to database not containing information on certain days.";
+}
+string ConvertDate(string date)
+{
+    int pos = date.find_first_of('/');
+    string month = date.substr(0, pos);
+    if (month.size() == 1)
+        month = '0' + month;
+    date = date.substr(pos+1);
+    pos = date.find_first_of('/');
+    string day = date.substr(0, pos);
+    if (day.size() == 1)
+        day = '0' + day;
+    string year = date.substr(pos+1);
+    return year + '-' + month + '-' + day;
 }
 
 int main() {

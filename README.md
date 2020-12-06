@@ -9,5 +9,5 @@
 - getline is used intstead of operator>> to handle each iteration of the while loop
 
 ## Plans
-- Create function to calculate percentage correct of investments or something similar
+- Started work on investment analyzer, needs to be finished
 - Name similarity checker? Makes names easier to search
