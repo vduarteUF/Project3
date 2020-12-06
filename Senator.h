@@ -21,6 +21,7 @@ class Senator
         };
     private:
         string name;
+        string displayName;
         
         void UpdateTrades();
     public:
@@ -70,14 +71,23 @@ void Senator::UpdateTrades()
 {
     ifstream file;
     file.open("SenatorTradingV2.csv");
+    string garbage;
     string line;
     string senator, ticker, owner, type, date;
-    int count;
     while (!file.eof()) 
     {
-        getline(file, line);
         stringstream str_stream(line);
+        getline(file, line);
         getline (str_stream, senator, ',');
+        if (name == "") //I have tried endless to fix the blank senator bug, this is my best solution
+                continue;
+        //Ensures name is correct
+        if (senator[0] == '"')
+        {
+            senator = senator + ',';
+            getline(str_stream, garbage, ',');
+            senator = senator + garbage;
+        }
         getline (str_stream, ticker, ',');
         getline (str_stream, owner, ',');
         getline (str_stream, type, ',');
