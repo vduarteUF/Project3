@@ -8,7 +8,11 @@
 #include <map>
 #include <set>
 #include "Senator.h"
+#include "Timer.h"
 using namespace std;
+
+//Timer code is taken from https://gist.github.com/mcleary/b0bf4fa88830ff7c882d#file-timer-cpp-L7
+//It functions as a simple timer for the purposes of timing the difference between a BST and a hashtable
 
 //Function Declarations
 void SingleSenatorHash(unordered_map<string, Senator*>& senators); //Option 1
@@ -29,6 +33,10 @@ void SingleSenatorHash(unordered_map<string, Senator*>& senators)
     string name;
     cout << "Enter a Senator's name: ";
     getline (cin, name);
+
+    //Timer
+    Timer timer;
+    timer.start();
 
     //Search name
     cout << "Searching for " << name << "..." << endl << endl;
@@ -55,9 +63,16 @@ void SingleSenatorHash(unordered_map<string, Senator*>& senators)
     cout << "Percentage of correct investments: " << percentages[0] << "%" << endl;
     cout << "Average percent return: " << percentages[1] << "%" << endl;
 
+    //Timer end
+    timer.stop();
+    cout << timer.elapsedMilliseconds() << "ms" << endl;
 }
 void AllSenatorsHash(unordered_map<string, Senator*>& senators)
 {
+    //Timer
+    Timer timer;
+    timer.start();
+
     cout << "Searching all senator's records..." << endl;
     
     //Open file
@@ -128,6 +143,10 @@ void AllSenatorsHash(unordered_map<string, Senator*>& senators)
     cout << "Average percent return: " << avgPercentReturn / senators.size() << "%" << endl;;
 
     file.close();
+
+    //Timer end
+    timer.stop();
+    cout << timer.elapsedMilliseconds() << "ms" << endl;
 }
 void ReadSenatorHash(string name, unordered_map<string, Senator*>& senators)
 {
@@ -444,12 +463,12 @@ int main() {
         //Option 3: Search for a Senator's public trading records using a BST
         else if (option == "3")
         {
-            //Something something ordered maps and sets
+
         }
         //Option 4: Search all Senator's public trading records using a BST
         else if (option == "4")
         {
-            //Something something ordered maps and sets
+
         }
         //Option 4: Display all trading senator names
         else if (option == "5") 
