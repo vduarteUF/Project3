@@ -18,9 +18,9 @@ using namespace std;
 void SingleSenatorHash(unordered_map<string, Senator*>& senators); //Option 1
 void AllSenatorsHash(unordered_map<string, Senator*>& senators); //Option 2
 void ReadSenatorHash(string name, unordered_map<string, Senator*>& senators); //Helper for SingleSenatorHash
-void SingleSenatorBST(unordered_map<string, Senator*>& senators); //Option 3
-void AllSenatorsBST(unordered_map<string, Senator*>& senators); //Option 4
-void ReadSenatorBST(string name, unordered_map<string, Senator*>& senators); //Helper for SingleSenatorBST
+void SingleSenatorBST(map<string, Senator*>& senators); //Option 3
+void AllSenatorsBST(map<string, Senator*>& senators); //Option 4
+void ReadSenatorBST(string name, map<string, Senator*>& senators); //Helper for SingleSenatorBST
 vector<float> InvestmentCalculator(Senator* senator); //Helper for calculating investment success
 int TradeCalculator(int lineNum, Senator::Trade trade, float& totalPercentage); //Heper for calculating individual trade success
 string ConvertDate(string date);
@@ -65,7 +65,7 @@ void SingleSenatorHash(unordered_map<string, Senator*>& senators)
 
     //Timer end
     timer.stop();
-    cout << timer.elapsedMilliseconds() << "ms" << endl;
+    cout << "Time search for a single senator using an un_ordered map: " << timer.elapsedMilliseconds() << "ms" << endl;
 }
 void AllSenatorsHash(unordered_map<string, Senator*>& senators)
 {
@@ -146,7 +146,7 @@ void AllSenatorsHash(unordered_map<string, Senator*>& senators)
 
     //Timer end
     timer.stop();
-    cout << timer.elapsedMilliseconds() << "ms" << endl;
+    cout << "Time search for all senators using an un_ordered map: " << timer.elapsedMilliseconds() << "ms" << endl;
 }
 void ReadSenatorHash(string name, unordered_map<string, Senator*>& senators)
 {
@@ -185,15 +185,133 @@ void ReadSenatorHash(string name, unordered_map<string, Senator*>& senators)
 }
 void SingleSenatorBST(map<string, Senator*>& senators)
 {
+    //Input name
+    string name;
+    cout << "Enter a Senator's name: ";
+    getline(cin, name);
 
+    //Timer
+    Timer timer;
+    timer.start();
+
+    //Search name
+    cout << "Searching for " << name << "..." << endl << endl;
+    ReadSenatorBST(name, senators);
+
+    //Display trades
+    if (senators.count(name) != 0)
+    {
+        cout << "Showing all trades for: " << name << endl;
+        int numTrades = senators[name]->trades.size();
+        for (int i = 0; i < numTrades; i++)
+        {
+            string _ticker = senators[name]->trades[i].ticker;
+            string _owner = senators[name]->trades[i].owner;
+            string _type = senators[name]->trades[i].type;
+            string _date = senators[name]->trades[i].date;
+            cout << _ticker << ", " << _owner << ", " << _type << ", " << _date << endl;
+        }
+        cout << "Total trades: " << numTrades << endl << endl;
+    }
+
+    //Calculate from stocks database
+    InvestmentCalculator(senators[name]);
+
+    //Timer end
+    timer.stop();
+    cout << "Time search for a single senator using a BST: " << timer.elapsedMilliseconds() << "ms" << endl;
 }
 void AllSenatorsBST(map<string, Senator*>& senators)
 {
+    cout << "Searching all senator's records..." << endl;
 
+    //Open file
+    ifstream file;
+    file.open("SenatorTradingV2.csv");
+
+    //Timer
+    Timer timer;
+    timer.start();
+
+    //Variables for data retrieval
+    string name;
+    string garbage;
+
+    getline(file, garbage); //Clears first line
+    while (!file.eof())
+    {
+        //Ensure the name is correct
+        getline(file, name, ',');
+        if (name == "")
+            continue;
+        if (name[0] == '"') //Fixes issues with quoted names such as "A. Mitchell McConnell, Jr."
+        {
+            name = name + ',';
+            getline(file, garbage, ',');
+            name = name + garbage;
+        }
+        if (senators.count(name) == 0) //If name not in senator map, adds them to map
+        {
+            Senator* newSenator = new Senator(name);
+            senators.emplace(name, newSenator);
+        }
+        getline(file, garbage);
+    }
+
+    //Provide basic data about all senators (name, number of trades)
+    int totalTrades = 0;
+    for (auto i = senators.begin(); i != senators.end(); i++)
+    {
+        string name = i->first;
+        cout << name << ":" << endl;
+        cout << "Number of trades: " << i->second->trades.size() << endl;
+        cout << endl;
+        totalTrades += i->second->trades.size();
+    }
+
+    cout << "Total senators with public trading records: " << senators.size() << endl;
+    cout << "Total public trades recorded: " << totalTrades << endl;
+
+    file.close();
+
+    //Timer end
+    timer.stop();
+    cout << "Time search for all senators using a BST: " << timer.elapsedMilliseconds() << "ms" << endl;
 }
 void ReadSenatorBST(string name, map<string, Senator*>& senators)
 {
+    //Variables for retrieving data / opening file
+    ifstream file;
+    file.open("SenatorTradingV2.csv");
+    string senator;
+    string garbage;
+    bool found; //Detects whether the name was found or not
 
+    while (!file.eof())
+    {
+        //Ensure the name is correct
+        getline(file, senator, ',');
+        if (name == "")
+            continue;
+        if (senator[0] == '"') //Fixes name issues with quoted name such as "A. Mitchell McConnell, Jr."
+        {
+            senator = senator + ',';
+            getline(file, garbage, ',');
+            senator = senator + garbage;
+        }
+        if (name == senator) //Match found
+        {
+            //Create senator object and break
+            Senator* newSenator = new Senator(name);
+            senators.emplace(name, newSenator);
+            found = true;
+            break;
+        }
+        getline(file, garbage);
+    }
+    if (!found)
+        cout << "Name not found." << endl;
+    file.close();
 }
 vector<float> InvestmentCalculator(Senator* senator)
 {
@@ -463,12 +581,14 @@ int main() {
         //Option 3: Search for a Senator's public trading records using a BST
         else if (option == "3")
         {
-
+            SingleSenatorBST(senatorsBST);
+            senatorsBST.clear();
         }
         //Option 4: Search all Senator's public trading records using a BST
         else if (option == "4")
         {
-
+            AllSenatorsBST(senatorsBST);
+            senatorsBST.clear();
         }
         //Option 4: Display all trading senator names
         else if (option == "5") 
@@ -477,8 +597,6 @@ int main() {
         }
         //Option 5: Close program
         else if (option == "6") {
-            
-            // Exit the loop
             quit = false;
         }
         //Default case
