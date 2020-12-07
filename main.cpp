@@ -239,6 +239,9 @@ void TradeCalculator(int lineNum, Senator::Trade trade)
     }
 
     //Loops through the next DAYS_OUT days
+    float startingPrice;
+    float endingPrice;
+
     for (int i = 0; i < DAYS_OUT; i++)
     {
         getline(file, line);
@@ -251,15 +254,24 @@ void TradeCalculator(int lineNum, Senator::Trade trade)
         getline(str_stream, adjClose, ',');
         getline(str_stream, volume);
 
-        cout << "Date: " << stockDate << endl;
-        cout << "Open: " << open << endl;
-        cout << "High: " << high << endl;
-        cout << "Low: " << low << endl;
-        cout << "Close: " << close << endl;
-        cout << "AdjClose: " << adjClose << endl;
-        cout << "Volume: " << volume << endl;
-        cout << endl;
+        if (i == 0)
+            startingPrice = stof(open);
+        if (i == DAYS_OUT - 1)
+            endingPrice = stof(close);
+
+        // cout << "Date: " << stockDate << endl;
+        // cout << "Open: " << open << endl;
+        // cout << "High: " << high << endl;
+        // cout << "Low: " << low << endl;
+        // cout << "Close: " << close << endl;
+        // cout << "AdjClose: " << adjClose << endl;
+        // cout << "Volume: " << volume << endl;
+        // cout << endl;
     }
+
+    float percent = ((endingPrice - startingPrice) / (startingPrice)) * 100;
+    cout << "Percent: " << percent << endl;
+
     file.close();
 }
 string ConvertDate(string date)
@@ -291,12 +303,12 @@ int main() {
 
         //Menu
         cout << "U.S. Senator Stock Market Data" << endl;
-        cout << "1. Search for a Senator's public trading records" << endl;
-        // add more options below
-        cout << "2. Search all Senator's public trading records" << endl;
-        //cout << "3. " << endl;
-        cout << "4. Display all availible senator names" << endl;
-        cout << "5. Exit" << endl;
+        cout << "1. Search for a Senator's public trading records using hashtables" << endl;
+        cout << "2. Search all Senator's public trading records using hastables" << endl;
+        cout << "3. Search for a Senator's public trading records using a BST" << endl;
+        cout << "4. Search all Senator's public trading records using a BST" << endl;
+        cout << "5. Display all availible senator names" << endl;
+        cout << "6. Exit" << endl;
 
         //Option selection
         cout << "Enter one of the options above: ";
@@ -304,7 +316,7 @@ int main() {
 
         //Function calls
 
-        //Options 1: Searching a single senator
+        //Options 1: Searching a single senator USING UN_ORDERED MAP
         if (option == "1") 
         {
             SingleSenator(senators);
@@ -314,13 +326,23 @@ int main() {
         {
             AllSenators(senators);
         }
+        //Option 3: Search for a Senator's public trading records using a BST
+        else if (option == "3")
+        {
+            //Something something ordered maps and sets
+        }
+        //Option 4: Search all Senator's public trading records using a BST
+        else if (option == "4")
+        {
+            //Something something ordered maps and sets
+        }
         //Option 4: Display all trading senator names
-        else if (option == "4") 
+        else if (option == "5") 
         {
             DisplayNames();
         }
         //Option 5: Close program
-        else if (option == "5") {
+        else if (option == "6") {
             
             // Exit the loop
             quit = false;
