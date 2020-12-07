@@ -104,8 +104,6 @@ void AllSenatorsHash(unordered_map<string, Senator*>& senators)
         getline(file, garbage);
     }
 
-    cout << "Time to fill hashtable-backed map: " << timer.elapsedMilliseconds() << "ms" << endl;
-
     //Provide basic data about all senators (name, number of trades)
     // int totalTrades = 0;
     // for (auto i = senators.begin(); i != senators.end(); i++)
@@ -190,28 +188,18 @@ void SingleSenatorBST(map<string, Senator*>& senators)
     //Input name
     string name;
     cout << "Enter a Senator's name: ";
-<<<<<<< Updated upstream
     getline(cin, name);
 
     //Timer
     Timer timer;
     timer.start();
 
-=======
-    getline (cin, name);
-
-    //Timer
-    Timer timer;
-    timer.start();
-
->>>>>>> Stashed changes
     //Search name
     cout << "Searching for " << name << "..." << endl << endl;
     ReadSenatorBST(name, senators);
 
     //Display trades
     if (senators.count(name) != 0)
-<<<<<<< Updated upstream
     {
         cout << "Showing all trades for: " << name << endl;
         int numTrades = senators[name]->trades.size();
@@ -241,38 +229,10 @@ void AllSenatorsBST(map<string, Senator*>& senators)
     ifstream file;
     file.open("SenatorTradingV2.csv");
 
-=======
-        {
-            cout << "Showing all trades for: " << name << endl;
-            int numTrades = senators[name]->trades.size();
-            for (int i = 0; i < numTrades; i++)
-            {
-                string _ticker = senators[name]->trades[i].ticker;
-                string _owner = senators[name]->trades[i].owner;
-                string _type = senators[name]->trades[i].type;
-                string _date = senators[name]->trades[i].date;
-                cout << _ticker << ", " << _owner << ", " << _type << ", " << _date << endl; 
-            }
-            cout << "Total trades: " << numTrades << endl << endl;
-        }
-
-    //Calculate from stocks database
-    vector<float> percentages = InvestmentCalculator(senators[name]);
-    cout << "Percentage of correct investments: " << percentages[0] << "%" << endl;
-    cout << "Average percent return: " << percentages[1] << "%" << endl;
-
-    //Timer end
-    timer.stop();
-    cout << timer.elapsedMilliseconds() << "ms" << endl;
-}
-void AllSenatorsBST(map<string, Senator*>& senators)
-{
->>>>>>> Stashed changes
     //Timer
     Timer timer;
     timer.start();
 
-<<<<<<< Updated upstream
     //Variables for data retrieval
     string name;
     string garbage;
@@ -311,88 +271,12 @@ void AllSenatorsBST(map<string, Senator*>& senators)
 
     cout << "Total senators with public trading records: " << senators.size() << endl;
     cout << "Total public trades recorded: " << totalTrades << endl;
-=======
-    cout << "Searching all senator's records..." << endl;
-    
-    //Open file
-    ifstream file;
-    file.open("SenatorTradingV2.csv");
-
-    //Variables for data retrieval
-    string name;
-    string garbage;
-
-    getline(file, garbage); //Clears first line
-    while (!file.eof())
-    {
-        //Ensure the name is correct
-        getline(file, name, ',');
-        if (name == "") //I have tried endless to fix the blank senator bug, this is my best solution
-                continue;
-        if (name[0] == '"') //Fixes issues with quoted names such as "A. Mitchell McConnell, Jr."
-        {
-            name = name + ',';
-            getline(file, garbage, ',');
-            name = name + garbage;
-        }
-        if (senators.count(name) == 0) //If name not in senator map, adds them to map
-        {
-            Senator* newSenator = new Senator(name);
-            senators.emplace(name, newSenator);
-        }
-        getline(file, garbage);
-    }
-
-    cout << "Time to fill BST-backed map: " << timer.elapsedMilliseconds() << "ms" << endl;
-
-    //Provide basic data about all senators (name, number of trades)
-    // int totalTrades = 0;
-    // for (auto i = senators.begin(); i != senators.end(); i++)
-    // {
-    //     string name = i->first;
-    //     cout << name << ":" << endl;
-    //     cout << "Number of trades: " << i->second->trades.size() << endl;
-    //     cout << endl;
-    //     totalTrades += i->second->trades.size();
-    // }
-
-    // cout << "Total senators with public trading records: " << senators.size() << endl;
-    // cout << "Total public trades recorded: " << totalTrades << endl;
-
-    //Calculate from stocks database
-    cout << "Analyzing trades..." << endl;
-    vector<float> tempPercentages;
-    float avgPercentCorrect;
-    float avgPercentReturn;
-    int count = 0;
-    for (auto i = senators.begin(); i != senators.end(); i++)
-    {
-        cout << (count * 100) / senators.size() << "%" << endl;
-        tempPercentages = InvestmentCalculator(i->second);
-        avgPercentCorrect += tempPercentages[0];
-        //cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
-        avgPercentReturn += tempPercentages[1];
-        //cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
-        count++;
-    }
-
-    // cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
-    // cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
-
-    cout << endl;
-    cout << "Average percent correct: " << avgPercentCorrect / senators.size() << "%" << endl;;
-    cout << "Average percent return: " << avgPercentReturn / senators.size() << "%" << endl;;
->>>>>>> Stashed changes
 
     file.close();
 
     //Timer end
     timer.stop();
-<<<<<<< Updated upstream
     cout << "Time search for all senators using a BST: " << timer.elapsedMilliseconds() << "ms" << endl;
-=======
-    cout << timer.elapsedMilliseconds() << "ms" << endl;
->>>>>>> Stashed changes
 }
 void ReadSenatorBST(string name, map<string, Senator*>& senators)
 {
@@ -403,21 +287,12 @@ void ReadSenatorBST(string name, map<string, Senator*>& senators)
     string garbage;
     bool found; //Detects whether the name was found or not
 
-<<<<<<< Updated upstream
     while (!file.eof())
     {
         //Ensure the name is correct
         getline(file, senator, ',');
         if (name == "")
             continue;
-=======
-    while (!file.eof()) 
-    {
-        //Ensure the name is correct
-        getline(file, senator, ',');
-        if (name == "") //I have tried endless to fix the blank senator bug, this is my best solution
-                continue;
->>>>>>> Stashed changes
         if (senator[0] == '"') //Fixes name issues with quoted name such as "A. Mitchell McConnell, Jr."
         {
             senator = senator + ',';
