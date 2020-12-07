@@ -65,7 +65,8 @@ void SingleSenatorHash(unordered_map<string, Senator*>& senators)
 
     //Timer end
     timer.stop();
-    cout << "Time search for a single senator using an un_ordered map: " << timer.elapsedMilliseconds() << "ms" << endl;
+    cout << endl;
+    cout << "Time search for a single senator using hashtables: " << timer.elapsedMilliseconds() << "ms" << endl;
 }
 void AllSenatorsHash(unordered_map<string, Senator*>& senators)
 {
@@ -103,6 +104,8 @@ void AllSenatorsHash(unordered_map<string, Senator*>& senators)
         }
         getline(file, garbage);
     }
+
+    cout << "Time to fill hashtable-backed map: " << timer.elapsedMilliseconds() << "ms" << endl;
 
     //Provide basic data about all senators (name, number of trades)
     // int totalTrades = 0;
@@ -215,7 +218,9 @@ void SingleSenatorBST(map<string, Senator*>& senators)
     }
 
     //Calculate from stocks database
-    InvestmentCalculator(senators[name]);
+    vector<float> percentages = InvestmentCalculator(senators[name]);
+    cout << "Percentage of correct investments: " << percentages[0] << "%" << endl;
+    cout << "Average percent return: " << percentages[1] << "%" << endl;
 
     //Timer end
     timer.stop();
@@ -258,19 +263,45 @@ void AllSenatorsBST(map<string, Senator*>& senators)
         getline(file, garbage);
     }
 
-    //Provide basic data about all senators (name, number of trades)
-    int totalTrades = 0;
+    cout << "Time to fill BST-backed map: " << timer.elapsedMilliseconds() << "ms" << endl;
+
+    // Provide basic data about all senators (name, number of trades)
+    // int totalTrades = 0;
+    // for (auto i = senators.begin(); i != senators.end(); i++)
+    // {
+    //     string name = i->first;
+    //     cout << name << ":" << endl;
+    //     cout << "Number of trades: " << i->second->trades.size() << endl;
+    //     cout << endl;
+    //     totalTrades += i->second->trades.size();
+    // }
+
+    // cout << "Total senators with public trading records: " << senators.size() << endl;
+    // cout << "Total public trades recorded: " << totalTrades << endl;
+
+    //Calculate from stocks database
+    cout << "Analyzing trades..." << endl;
+    vector<float> tempPercentages;
+    float avgPercentCorrect;
+    float avgPercentReturn;
+    int count = 0;
     for (auto i = senators.begin(); i != senators.end(); i++)
     {
-        string name = i->first;
-        cout << name << ":" << endl;
-        cout << "Number of trades: " << i->second->trades.size() << endl;
-        cout << endl;
-        totalTrades += i->second->trades.size();
+        cout << (count * 100) / senators.size() << "%" << endl;
+        tempPercentages = InvestmentCalculator(i->second);
+        avgPercentCorrect += tempPercentages[0];
+        //cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+        avgPercentReturn += tempPercentages[1];
+        //cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+        count++;
     }
 
-    cout << "Total senators with public trading records: " << senators.size() << endl;
-    cout << "Total public trades recorded: " << totalTrades << endl;
+    // cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+    // cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+
+    cout << endl;
+    cout << "Average percent correct: " << avgPercentCorrect / senators.size() << "%" << endl;;
+    cout << "Average percent return: " << avgPercentReturn / senators.size() << "%" << endl;;
 
     file.close();
 
