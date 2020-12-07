@@ -4,20 +4,26 @@
 #include <sstream>
 #include <unordered_map>
 #include <unordered_set>
+#include <map>
+#include <set>
 #include "Senator.h"
 using namespace std;
 
 //Function Declarations
-void SingleSenator(unordered_map<string, Senator*>& senators); //Option 1
-void AllSenators(unordered_map<string, Senator*>& senators); //Option 2
-void DisplayNames(); //Option 4
-void ReadSenator(string name, unordered_map<string, Senator*>& senators); //Helper for Single Senator
-void InvestmentCalculator(Senator* senator); //Helper for calculating trade success
-void TradeCalculator(int lineNum, Senator::Trade trade);
+void SingleSenatorHash(unordered_map<string, Senator*>& senators); //Option 1
+void AllSenatorsHash(unordered_map<string, Senator*>& senators); //Option 2
+void ReadSenatorHash(string name, unordered_map<string, Senator*>& senators); //Helper for SingleSenatorHash
+
+void SingleSenatorBST(unordered_map<string, Senator*>& senators); //Option 3
+void AllSenatorsBST(unordered_map<string, Senator*>& senators); //Option 4
+void ReadSenatorBST(string name, unordered_map<string, Senator*>& senators); //Helper for SingleSenatorBST
+void InvestmentCalculator(Senator* senator); //Helper for calculating investment success
+void TradeCalculator(int lineNum, Senator::Trade trade); //Heper for calculating individual trade success
 string ConvertDate(string date);
+void DisplayNames(); //Option 5
 
 //Functions Definitions
-void SingleSenator(unordered_map<string, Senator*>& senators)
+void SingleSenatorHash(unordered_map<string, Senator*>& senators)
 {
     //Input name
     string name;
@@ -26,7 +32,7 @@ void SingleSenator(unordered_map<string, Senator*>& senators)
 
     //Search name
     cout << "Searching for " << name << "..." << endl << endl;
-    ReadSenator(name, senators);
+    ReadSenatorHash(name, senators);
 
     //Display trades
     if (senators.count(name) != 0)
@@ -47,7 +53,7 @@ void SingleSenator(unordered_map<string, Senator*>& senators)
     //Calculate from stocks database
     InvestmentCalculator(senators[name]);
 }
-void AllSenators(unordered_map<string, Senator*>& senators)
+void AllSenatorsHash(unordered_map<string, Senator*>& senators)
 {
     cout << "Searching all senator's records..." << endl;
     
@@ -96,41 +102,7 @@ void AllSenators(unordered_map<string, Senator*>& senators)
 
     file.close();
 }
-void DisplayNames()
-{
-    //Open file
-    ifstream file;
-    file.open("SenatorTradingV2.csv");
-
-    //Variables for data retrieval / storage
-    unordered_set<string> senatorNames;
-    string name;
-    string garbage;
-
-    getline(file, garbage); //Clears first line
-    while (!file.eof())
-    {
-        //Ensure the name is correct
-        getline(file, name, ',');
-        if (name == "") //I have tried endless to fix the blank senator bug, this is my best solution
-                continue;
-        if (name[0] == '"') //Fixes issues with quoted names such as "A. Mitchell McConnell, Jr."
-        {
-            name = name + ',';
-            getline(file, garbage, ',');
-            name = name + garbage;
-        }
-        if (senatorNames.count(name) == 0) //If name not in set, places it in and prints name
-        { 
-            senatorNames.emplace(name);
-            cout << name << endl;
-        }
-        getline(file, garbage);
-    }
-    cout << "Total senators: " << senatorNames.size() << endl;
-    file.close();
-}
-void ReadSenator(string name, unordered_map<string, Senator*>& senators)
+void ReadSenatorHash(string name, unordered_map<string, Senator*>& senators)
 {
     //Variables for retrieving data / opening file
     ifstream file;
@@ -164,6 +136,18 @@ void ReadSenator(string name, unordered_map<string, Senator*>& senators)
     if (!found)
         cout << "Name not found." << endl;
     file.close();
+}
+void SingleSenatorBST(map<string, Senator*>& senators)
+{
+
+}
+void AllSenatorsBST(map<string, Senator*>& senators)
+{
+
+}
+void ReadSenatorBST(string name, map<string, Senator*>& senators)
+{
+
 }
 void InvestmentCalculator(Senator* senator)
 {
@@ -289,10 +273,45 @@ string ConvertDate(string date)
     string year = date.substr(pos+1);
     return year + '-' + month + '-' + day;
 }
+void DisplayNames()
+{
+    //Open file
+    ifstream file;
+    file.open("SenatorTradingV2.csv");
+
+    //Variables for data retrieval / storage
+    unordered_set<string> senatorNames;
+    string name;
+    string garbage;
+
+    getline(file, garbage); //Clears first line
+    while (!file.eof())
+    {
+        //Ensure the name is correct
+        getline(file, name, ',');
+        if (name == "") //I have tried endless to fix the blank senator bug, this is my best solution
+                continue;
+        if (name[0] == '"') //Fixes issues with quoted names such as "A. Mitchell McConnell, Jr."
+        {
+            name = name + ',';
+            getline(file, garbage, ',');
+            name = name + garbage;
+        }
+        if (senatorNames.count(name) == 0) //If name not in set, places it in and prints name
+        { 
+            senatorNames.emplace(name);
+            cout << name << endl;
+        }
+        getline(file, garbage);
+    }
+    cout << "Total senators: " << senatorNames.size() << endl;
+    file.close();
+}
 
 int main() {
 
-    unordered_map<string, Senator*> senators;
+    unordered_map<string, Senator*> senatorsHash;
+    map<string, Senator*> senatorsBST;
 
     bool quit = true;
 
@@ -319,12 +338,12 @@ int main() {
         //Options 1: Searching a single senator USING UN_ORDERED MAP
         if (option == "1") 
         {
-            SingleSenator(senators);
+            SingleSenatorHash(senatorsHash);
         }
         //Option 2: Search all senators
         else if (option == "2")
         {
-            AllSenators(senators);
+            AllSenatorsHash(senatorsHash);
         }
         //Option 3: Search for a Senator's public trading records using a BST
         else if (option == "3")
