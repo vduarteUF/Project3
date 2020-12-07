@@ -69,11 +69,14 @@ Senator::~Senator()
 
 void Senator::UpdateTrades()
 {
+    //Variables for data retrieval / open file
     ifstream file;
     file.open("SenatorTradingV2.csv");
     string garbage;
     string line;
     string senator, ticker, owner, type, date;
+
+    //Search senator database for name matches to add trades
     while (!file.eof()) 
     {
         stringstream str_stream(line);
@@ -96,7 +99,7 @@ void Senator::UpdateTrades()
         if (ticker == "--") //Removes non-public stocks from calculations and lists
             continue;
 
-        if (name == senator)
+        if (name == senator) //Match found, creates new trade and adds to trade vector
         {
             Trade newTrade(ticker, owner, type, date);
             trades.push_back(newTrade);
