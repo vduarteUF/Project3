@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cmath>
 #include <unordered_map>
 #include <unordered_set>
 #include <map>
@@ -13,12 +14,11 @@ using namespace std;
 void SingleSenatorHash(unordered_map<string, Senator*>& senators); //Option 1
 void AllSenatorsHash(unordered_map<string, Senator*>& senators); //Option 2
 void ReadSenatorHash(string name, unordered_map<string, Senator*>& senators); //Helper for SingleSenatorHash
-
 void SingleSenatorBST(unordered_map<string, Senator*>& senators); //Option 3
 void AllSenatorsBST(unordered_map<string, Senator*>& senators); //Option 4
 void ReadSenatorBST(string name, unordered_map<string, Senator*>& senators); //Helper for SingleSenatorBST
-void InvestmentCalculator(Senator* senator); //Helper for calculating investment success
-void TradeCalculator(int lineNum, Senator::Trade trade); //Heper for calculating individual trade success
+vector<float> InvestmentCalculator(Senator* senator); //Helper for calculating investment success
+int TradeCalculator(int lineNum, Senator::Trade trade, float& totalPercentage); //Heper for calculating individual trade success
 string ConvertDate(string date);
 void DisplayNames(); //Option 5
 
@@ -51,7 +51,10 @@ void SingleSenatorHash(unordered_map<string, Senator*>& senators)
         }
 
     //Calculate from stocks database
-    InvestmentCalculator(senators[name]);
+    vector<float> percentages = InvestmentCalculator(senators[name]);
+    cout << "Percentage of correct investments: " << percentages[0] << "%" << endl;
+    cout << "Average percent return: " << percentages[1] << "%" << endl;
+
 }
 void AllSenatorsHash(unordered_map<string, Senator*>& senators)
 {
@@ -87,18 +90,42 @@ void AllSenatorsHash(unordered_map<string, Senator*>& senators)
     }
 
     //Provide basic data about all senators (name, number of trades)
-    int totalTrades = 0;
+    // int totalTrades = 0;
+    // for (auto i = senators.begin(); i != senators.end(); i++)
+    // {
+    //     string name = i->first;
+    //     cout << name << ":" << endl;
+    //     cout << "Number of trades: " << i->second->trades.size() << endl;
+    //     cout << endl;
+    //     totalTrades += i->second->trades.size();
+    // }
+
+    // cout << "Total senators with public trading records: " << senators.size() << endl;
+    // cout << "Total public trades recorded: " << totalTrades << endl;
+
+    //Calculate from stocks database
+    cout << "Analyzing trades..." << endl;
+    vector<float> tempPercentages;
+    float avgPercentCorrect;
+    float avgPercentReturn;
+    int count = 0;
     for (auto i = senators.begin(); i != senators.end(); i++)
     {
-        string name = i->first;
-        cout << name << ":" << endl;
-        cout << "Number of trades: " << i->second->trades.size() << endl;
-        cout << endl;
-        totalTrades += i->second->trades.size();
+        cout << (count * 100) / senators.size() << "%" << endl;
+        tempPercentages = InvestmentCalculator(i->second);
+        avgPercentCorrect += tempPercentages[0];
+        //cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+        avgPercentReturn += tempPercentages[1];
+        //cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+        count++;
     }
 
-    cout << "Total senators with public trading records: " << senators.size() << endl;
-    cout << "Total public trades recorded: " << totalTrades << endl;
+    // cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+    // cout << "avgPercentCorrect: " << avgPercentCorrect << endl;
+
+    cout << endl;
+    cout << "Average percent correct: " << avgPercentCorrect / senators.size() << "%" << endl;;
+    cout << "Average percent return: " << avgPercentReturn / senators.size() << "%" << endl;;
 
     file.close();
 }
@@ -149,9 +176,9 @@ void ReadSenatorBST(string name, map<string, Senator*>& senators)
 {
 
 }
-void InvestmentCalculator(Senator* senator)
+vector<float> InvestmentCalculator(Senator* senator)
 {
-    cout << "Analyzing investments..." << endl;
+    //cout << "Analyzing investments..." << endl;
 
     //Variables for data retrieval
     ifstream file;
@@ -160,6 +187,10 @@ void InvestmentCalculator(Senator* senator)
     int lineNum = 0;
     string stockDate;
 
+    //Variables for calculating investment success
+    float totalPercentage = 0.0f;
+    int numCorrect = 0;
+
     //Goes through each of the senator's trades
     for (int i = 0; i < senator->trades.size(); i++)
     {
@@ -167,8 +198,7 @@ void InvestmentCalculator(Senator* senator)
         file.open("StockMarketDataset/stocks/" + senator->trades[i].ticker + ".csv");
         if (!file.is_open())
         {
-            cout << "Couldn't find data for ticker: " << senator->trades[i].ticker << endl;
-            cout << "File needed: " << "StockMarketDataset/stocks/" + senator->trades[i].ticker + ".csv" << endl;
+            //cout << "Couldn't find data for ticker: " << senator->trades[i].ticker << endl;
             continue;
         }
         
@@ -184,8 +214,8 @@ void InvestmentCalculator(Senator* senator)
             //Upon match, analyzes the trade specifically
             if (stockDate == senatorTradeDate)
             {
-                cout << senator->trades[i].ticker << " trade on: " << stockDate << endl; //TODO: SEE IF TRADE WAS GOOD OR NOT
-                TradeCalculator(lineNum, senator->trades[i]);
+                //cout << senator->trades[i].ticker << " trade on: " << stockDate << endl; //TODO: SEE IF TRADE WAS GOOD OR NOT
+                numCorrect += TradeCalculator(lineNum, senator->trades[i], totalPercentage);
             }
             getline(str_stream, garbage);
         }
@@ -193,13 +223,33 @@ void InvestmentCalculator(Senator* senator)
         file.close();
     }
 
-    cout << endl;
-    cout << "NOTE: There may be less analyzed trades than recorded trades due to database not containing information on certain days.";
+    //cout<< endl;
+    //cout << "Percentage of correct investments: " << ((float)numCorrect / (float)senator->trades.size()) * 100 << endl;;
+    //cout << "Average percent return: " << totalPercentage / (float)senator->trades.size() << endl;
+
+    // cout << "numCorrect: " << numCorrect << endl;
+    // cout << "totalPercentage: " << totalPercentage << endl;
+
+    vector<float> percentages;
+    if (senator->trades.size() != 0)
+    {
+        percentages.push_back(((float)numCorrect / (float)senator->trades.size()) * 100);
+        percentages.push_back(totalPercentage / (float)senator->trades.size());
+    }
+    else
+    {
+        percentages.push_back(0.0f);
+        percentages.push_back(0.0f);
+    }
+    return percentages;
+
+    //cout << endl;
+    //cout << "NOTE: There may be less analyzed trades than recorded trades due to database not containing information on certain days.";
 }
-void TradeCalculator(int lineNum, Senator::Trade trade)
+int TradeCalculator(int lineNum, Senator::Trade trade, float& totalPercentage)
 {
     //Constant values for calculations
-    const int DAYS_OUT = 10;
+    const int DAYS_OUT = 100;
 
     //Variables for data retrieval
     ifstream file;
@@ -211,9 +261,8 @@ void TradeCalculator(int lineNum, Senator::Trade trade)
     file.open("StockMarketDataset/stocks/" + trade.ticker + ".csv");
     if (!file.is_open())
     {
-        cout << "Couldn't find data for ticker: " << trade.ticker << endl;
-        cout << "File needed: " << "StockMarketDataset/stocks/" + trade.ticker + ".csv" << endl;
-        return;
+        //cout << "Couldn't find data for ticker: " << trade.ticker << endl;
+        return 0;
     }
     
     //Skips to relevant lines
@@ -239,10 +288,32 @@ void TradeCalculator(int lineNum, Senator::Trade trade)
         getline(str_stream, volume);
 
         if (i == 0)
-            startingPrice = stof(open);
+        {
+            try 
+            {
+                startingPrice = stof(open);
+            }
+            catch (const std::invalid_argument& ia)
+            {
+                startingPrice = 0;
+                endingPrice = 0;
+                break;
+            }
+        }    
         if (i == DAYS_OUT - 1)
-            endingPrice = stof(close);
-
+        {
+            try 
+            {
+                endingPrice = stof(open);
+            }
+            catch (const std::invalid_argument& ia)
+            {
+                startingPrice = 0;
+                endingPrice = 0;
+                break;
+            }
+        }
+            
         // cout << "Date: " << stockDate << endl;
         // cout << "Open: " << open << endl;
         // cout << "High: " << high << endl;
@@ -252,11 +323,34 @@ void TradeCalculator(int lineNum, Senator::Trade trade)
         // cout << "Volume: " << volume << endl;
         // cout << endl;
     }
-
-    float percent = ((endingPrice - startingPrice) / (startingPrice)) * 100;
-    cout << "Percent: " << percent << endl;
-
     file.close();
+    
+    float percent = ((endingPrice - startingPrice) / (startingPrice)) * 100;
+    if (isnan(percent) != 0)
+    {
+        percent = 0.0f;
+    }
+    totalPercentage += percent;
+
+    // cout << "Starting price: " << startingPrice << endl;
+    // cout << "Ending price: " << endingPrice << endl;
+    // cout << "Percent: " << percent << endl;
+    // cout << "Trade: " << trade.type << endl;
+
+    if (trade.type == "Purchase")
+    {
+        if (percent < 0)
+            return 0;//cout << "Bad trade" << endl;
+        else
+            return 1;//cout << "Good trade" << endl;
+    }
+    else
+    {
+        if (percent > 0)
+            return 0;//cout << "Bad trade" << endl;
+        else
+            return 1;//cout << "Good trade" << endl;
+    }
 }
 string ConvertDate(string date)
 {
@@ -339,11 +433,13 @@ int main() {
         if (option == "1") 
         {
             SingleSenatorHash(senatorsHash);
+            senatorsHash.clear();
         }
         //Option 2: Search all senators
         else if (option == "2")
         {
             AllSenatorsHash(senatorsHash);
+            senatorsHash.clear();
         }
         //Option 3: Search for a Senator's public trading records using a BST
         else if (option == "3")
