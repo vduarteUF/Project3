@@ -6,8 +6,12 @@
 
 ## Main
 - Prints out a menu and reads in the commands from the user
-- getline is used intstead of operator>> to handle each iteration of the while loop
 
-## Plans
-- Started work on investment analyzer, needs to be finished
-- Name similarity checker? Makes names easier to search
+## Single Senator Report
+- Search for a single senator, then checks all of their trades and reports their percentage of good investments and their average return
+
+## All Senators Report
+- Searches through all senators, then checks all of their trades and reports the average percentage of good investments and the average of their individual returns
+
+## Display Names
+- Displays the names of all the Senators as they appear in the database. Searched names must be formatted in the same way.
